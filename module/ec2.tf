@@ -1,7 +1,7 @@
 #key pair
 resource aws_key_pair my_key{
-  key_name = "${var.dev}-ec2-key"
-  public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPOC1YIWMB+0vB+FJsk880FytvH7lDgmicwOygMjeNbH surya@surya"
+  key_name = "${var.env}-ec2-key"
+  public_key = file("ec2-key")
 }
 
 #VPC and  security group
@@ -10,7 +10,7 @@ resource aws_default_vpc default {}
 
 
 resource aws_security_group my_security_group {
-    name = "adding security group"
+    name = "${var.env}-${var.sg_name}"
     description = "using tf we are adding the vpc and security group which are added during the creation of ec2 instances automatically"
     vpc_id = aws_default_vpc.default.id # this is known as interpolation
     
@@ -54,25 +54,18 @@ resource aws_security_group my_security_group {
 
 resource "aws_instance" "my_instance"{
     key_name = aws_key_pair.my_key.key_name
-    # count = 2
-    for_each = tomap({
-        tws-suraj-instance = "t2.micro"
-        tws-anuj-instance = "t2.micro"
-    })
+    count = var.count
     depends_on = [ aws_security_group.my_security_group]
     security_groups = [aws_security_group.my_security_group.name]    # check kro isko ek baar 
-    # instance_type = var.ec2_instance_type
-    instance_type = each.value
-    ami = var.ec2_ami_id
-    user_data = file("nginx.sh")
+    instance_type = var.instance_type
+    ami = var.ami
     root_block_device {
-        # volume_size = var.ec2_storage_size
-        volume_size = var.env == "prod" ? 25 : var.ec2_default_storage_size
+        volume_size = var.env == "prod" ? 25 : var.default_storage_size
         volume_type = "gp3"
     }
     tags = {
-        # Name = "terraform-ec2-instance"
-        Name = each.key
+        Name = "${var.env}-suraj-infra"
+        Environment = var.env
     }
 }
 
