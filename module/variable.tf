@@ -29,6 +29,16 @@ variable "ami" {
 }
 
 variable "default_storage_size" {
-  description = "this is the count of the infra"
+  default = 10
+  type = number
+}
+
+variable "db_name" {
+  description = "this is the db name the infra"
+  type = string
+}
+
+variable "hash_key" {
+  description = "this is the db hash key of the infra"
   type = string
 }
