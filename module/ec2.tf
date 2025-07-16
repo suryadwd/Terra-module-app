@@ -57,7 +57,7 @@ resource aws_security_group my_security_group {
 
 resource "aws_instance" "my_instance"{
     key_name = aws_key_pair.my_key.key_name
-    count = var.count
+    count = var.instance_count
     depends_on = [ aws_security_group.my_security_group]
     security_groups = [aws_security_group.my_security_group.name]    # check kro isko ek baar 
     instance_type = var.instance_type

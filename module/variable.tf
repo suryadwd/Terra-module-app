@@ -13,9 +13,9 @@ variable "sg_name" {
   type = string
 }
 
-variable "count" {
+variable "instance_count" {
   description = "this is the count of the infra"
-  type = string
+  type = number
 }
 
 variable "instance_type" {
